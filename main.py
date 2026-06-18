@@ -1,12 +1,90 @@
 import products
-from store import Store
+import store
 
-product_list = [products.Product("MacBook Air M2", price=1450, quantity=100),
-                products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-                products.Product("Google Pixel 7", price=500, quantity=250),
+# setup initial stock of inventory
+product_list = [ products.Product("MacBook Air M2", price=1450, quantity=100),
+                 products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+                 products.Product("Google Pixel 7", price=500, quantity=250)
                ]
+best_buy = store.Store(product_list)
 
-best_buy = Store(product_list)
-products = best_buy.get_all_products()
-print(best_buy.get_total_quantity())
-print(best_buy.order([(products[0], 1), (products[1], 2)]))
+
+def pretty_print_product_list(products):
+    """Print a numbered list of products."""
+    print("------")
+    for index, product in enumerate(products):
+        print(index + 1, end=". ")
+        product.show()
+    print("------")
+
+
+def order_a_products(products, product, amount):
+    """Validate a single order line and return (product, amount) or None."""
+    try:
+        product = int(product)
+        amount = int(amount)
+    except ValueError:
+        return None
+
+    if product not in range(1, len(products) + 1):
+        return None
+
+    chosen_product = products[product - 1]
+    if amount <= 0 or amount > chosen_product.quantity:
+        return None
+
+    return chosen_product, amount
+
+
+def place_order(products):
+    """Prompt the user for order lines and return the shopping cart."""
+    pretty_print_product_list(products)
+    print('When you want to finish order, enter empty text.')
+    shopping_cart = []
+    while True:
+        product = input('Which product # do you want? ')
+        amount = input('What amount do you want? ')
+        if not product and not amount:
+            return shopping_cart
+        else:
+            ordered_product = order_a_products(products, product, amount)
+            if ordered_product:
+                shopping_cart.append(ordered_product)
+            else:
+                print('Error adding product!')
+
+
+def start(store):
+    """Run the interactive store menu loop."""
+    while True:
+        print("""\n\tStore Menu
+\t----------
+1. List all products in store
+2. Show total amount in store
+3. Make an order
+4. Quit""")
+        user_choice = ""
+        while user_choice not in ["1", "2", "3", "4"]:
+            user_choice = input("Please choose a number: ")
+
+        match int(user_choice):
+            case 1:
+                pretty_print_product_list(store.get_all_products())
+            case 2:
+                print(f"Total of {store.get_total_quantity()} items in store")
+            case 3:
+                order = place_order(store.get_all_products())
+                if order:
+                    print(f'********')
+                    print(f'Order made! Total payments: ${store.order(order)}')
+            case 4:
+                return
+
+
+def main():
+    """Program entry point."""
+    start(best_buy)
+
+
+if __name__ == "__main__":
+    main()
