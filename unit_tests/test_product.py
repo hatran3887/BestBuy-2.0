@@ -1,6 +1,5 @@
 import pytest
-
-from models.product import Product
+from models.products import Product
 
 
 def test_create_product():
