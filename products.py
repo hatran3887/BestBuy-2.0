@@ -13,7 +13,7 @@ class Product:
         self.name = name
         self.price = price
         self.quantity = quantity
-        self.active = True
+        self.active = quantity > 0
 
 
     def get_quantity(self):
@@ -26,6 +26,8 @@ class Product:
         self.quantity = quantity
         if self.quantity == 0:
             self.active = False
+        elif self.quantity > 0:
+            self.active = True
 
 
     def is_active(self):
@@ -55,4 +57,6 @@ class Product:
         if quantity > self.quantity:
             raise ValueError("Out of stock")
         self.quantity -= quantity
+        if self.quantity == 0:
+            self.active = False
         return quantity * self.price
