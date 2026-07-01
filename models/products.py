@@ -14,6 +14,7 @@ class Product:
         self.price = price
         self.quantity = quantity
         self.active = quantity > 0
+        self.promotion = None
 
 
     def get_quantity(self):
@@ -47,7 +48,7 @@ class Product:
 
     def show(self):
         """Print a one-line summary of the product."""
-        print(f'{self.name}, Price: ${self.price}, Quantity: {self.quantity}')
+        print(f'{self.name}, Price: ${self.price}, Quantity: {self.quantity}, Promotion: {self.get_promotion_name()}')
 
 
     def buy(self, quantity):
@@ -59,7 +60,31 @@ class Product:
         self.quantity -= quantity
         if self.quantity == 0:
             self.active = False
-        return quantity * self.price
+        return self.get_total_price(quantity)
+
+
+    def set_promotion(self, promotion):
+        """Set the promotion"""
+        self.promotion = promotion
+
+
+    def get_promotion(self):
+        """Return the current promotion."""
+        return self.promotion
+
+
+    def get_promotion_name(self):
+        """Return the name of the promotion and None if not available."""
+        promotion = self.promotion.name if self.promotion else "None"
+        return promotion
+
+
+    def get_total_price(self, quantity):
+        """Return the total price of the product."""
+        if self.promotion:
+            return self.promotion.apply_promotion(self, quantity)
+        else:
+            return quantity * self.price
 
 
 class NonStockedProduct(Product):
@@ -79,12 +104,12 @@ class NonStockedProduct(Product):
         """Buy the given quantity and return the total price."""
         if type(quantity) != int or quantity <= 0:
             raise ValueError("Product quantity is required")
-        return quantity * self.price
+        return self.get_total_price(quantity)
 
 
     def show(self):
         """Print a one-line summary of the product."""
-        print(f'{self.name}, Price: ${self.price}, Quantity: Unlimited')
+        print(f'{self.name}, Price: ${self.price}, Quantity: Unlimited, Promotion: {self.get_promotion_name()}')
 
 
 class LimitedProduct(Product):
@@ -98,11 +123,11 @@ class LimitedProduct(Product):
 
     def show(self):
         """Print a one-line summary of the product."""
-        print(f'{self.name}, Price: ${self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}')
+        print(f'{self.name}, Price: ${self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}, Promotion: {self.get_promotion_name()}')
 
 
     def buy(self, quantity):
         """Buy the given quantity and return the total price."""
         if type(quantity) != int or quantity <= 0 or quantity > self.maximum:
             raise ValueError("Product quantity should be an int greater than 0 and less than or equal the maximum")
-        return quantity * self.price
+        return self.get_total_price(quantity)
