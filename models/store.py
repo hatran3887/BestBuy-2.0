@@ -29,6 +29,14 @@ class Store:
     def order(self, shopping_list):
         """Buy each (product, quantity) pair and return the total price."""
         total_price = 0
-        for product, quantity in shopping_list:
-            total_price += product.buy(quantity)
-        return total_price
+        bought_products = []
+        try:
+            for product, quantity in shopping_list:
+                total_price += product.buy(quantity)
+                bought_products.append(product)
+        except ValueError as e:
+            for product, quantity in bought_products:
+                product.set_quantity(product.get_quantity() + quantity)
+            raise e
+        else:
+            return total_price

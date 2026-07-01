@@ -1,4 +1,4 @@
-from models import products, store
+from models import products as products_module, store
 
 
 def pretty_print_product_list(products):
@@ -22,9 +22,6 @@ def order_a_products(products, product, amount):
         return None
 
     chosen_product = products[product - 1]
-    if amount <= 0 or amount > chosen_product.quantity:
-        return None
-
     return chosen_product, amount
 
 
@@ -67,17 +64,24 @@ def start(store):
             case 3:
                 order = place_order(store.get_all_products())
                 if order:
-                    print(f'********')
-                    print(f'Order made! Total payments: ${store.order(order)}')
+                    try:
+                        total = store.order(order)
+                    except ValueError:
+                        print('Error adding product!')
+                    else:
+                        print(f'********')
+                        print(f'Order made! Total payments: ${total}')
             case 4:
                 return
 
 
 def main():
     """Program entry point."""
-    product_list = [products.Product("MacBook Air M2", price=1450, quantity=100),
-                    products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-                    products.Product("Google Pixel 7", price=500, quantity=250)
+    product_list = [products_module.Product("MacBook Air M2", price=1450, quantity=100),
+                    products_module.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+                    products_module.Product("Google Pixel 7", price=500, quantity=250),
+                    products_module.NonStockedProduct("Windows License", price=125),
+                    products_module.LimitedProduct("Shipping", price=10, quantity=250, maximum=1)
                     ]
     best_buy = store.Store(product_list)
     start(best_buy)

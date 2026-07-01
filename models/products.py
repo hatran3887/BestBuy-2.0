@@ -60,3 +60,49 @@ class Product:
         if self.quantity == 0:
             self.active = False
         return quantity * self.price
+
+
+class NonStockedProduct(Product):
+    """A non-stocked product with quantity 0."""
+
+    def __init__(self, name, price):
+        """Create a non-stocked product."""
+        super().__init__(name, price, 0)
+
+
+    def set_quantity(self, quantity):
+        """Ignore because the quantity is always 0."""
+        pass
+
+
+    def buy(self, quantity):
+        """Buy the given quantity and return the total price."""
+        if type(quantity) != int or quantity <= 0:
+            raise ValueError("Product quantity is required")
+        return quantity * self.price
+
+
+    def show(self):
+        """Print a one-line summary of the product."""
+        print(f'{self.name}, Price: ${self.price}, Quantity: Unlimited')
+
+
+class LimitedProduct(Product):
+    """A product, which is limited per order"""
+
+    def __init__(self, name, price, quantity, maximum):
+        """Create a limited product."""
+        super().__init__(name, price, quantity)
+        self.maximum = maximum
+
+
+    def show(self):
+        """Print a one-line summary of the product."""
+        print(f'{self.name}, Price: ${self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}')
+
+
+    def buy(self, quantity):
+        """Buy the given quantity and return the total price."""
+        if type(quantity) != int or quantity <= 0 or quantity > self.maximum:
+            raise ValueError("Product quantity should be an int greater than 0 and less than or equal the maximum")
+        return quantity * self.price
