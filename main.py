@@ -70,7 +70,7 @@ def start(store):
                     except ValueError:
                         print('Error adding product!')
                     else:
-                        print(f'********')
+                        print('********')
                         print(f'Order made! Total payments: ${total}')
             case 4:
                 return

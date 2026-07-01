@@ -7,7 +7,6 @@ class Promotion(ABC):
     def __init__(self, name):
         self.name = name
 
-
     @abstractmethod
     def apply_promotion(self, product, quantity) -> float:
         """Abstract method to apply the promotion"""
@@ -40,7 +39,6 @@ class PercentDiscount(Promotion):
         """Initialize the promotion class with percent discount"""
         super().__init__(name)
         self.percent = percent
-
 
     def apply_promotion(self, product, quantity) -> float:
         """Return the percent discount promotion price"""
